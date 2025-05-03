@@ -1,6 +1,11 @@
 { config, pkgs, lib, ... }:
 
-{
+let
+  swayConfig = import ./modules/sway.nix { inherit config pkgs lib; };
+  wofiConfig = import ./modules/wofi.nix { inherit config pkgs lib; };
+  kittyConfig = import ./modules/kitty.nix { inherit config pkgs lib; };
+
+in {
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "mifd";
@@ -17,64 +22,25 @@
 
   # The home.packages option allows you to install Nix packages into your
   # environment.
-  home.packages = [
-    pkgs.swaybg
-    pkgs.swaylock
-  ];
+  home.packages = [ pkgs.swaybg pkgs.swaylock pkgs.zoxide ];
 
-  wayland.windowManager.sway = {
-      enable = true;
-      config = {
-        modifier = "Mod4";
-        terminal = "kitty"; 
-        defaultWorkspace = "workspace number 1";
-        gaps = {
-          inner = 8;
-          outer = 5;
-        };
-        input =  {
-          "type:touchpad" = {
-            tap = "enabled";
-            natural_scroll = "enabled";
-          };
-        };
-        window = {
-          titlebar = false;
-        };
-        keybindings = lib.mkOptionDefault {
-         "Mod4+q" = "exec swaymsg kill";
-         "Mod4+Return" = "exec kitty";
-         "Mod4+d" = "exec wofi --show drun";
-         "Mod4+p" = "exec swaylock";
-        };
-        startup = [
-          {command = "swww-daemon&; disown";}
-          {command = "swww img ~/Pictures/shop.gif";}
-        ];
-      };
-    };
+  # Import modules
+  imports = [ swayConfig wofiConfig kittyConfig ];
 
-	programs.kitty = {
-	    enable = true;
-	    settings = {
-		confirm_os_window_close = 0;
-		    enable_audio_bell = false;
-		    mouse_hide_wait = "-1.0";
-		    background_opacity = "0.80";
-		    background_blur = 5;	    
-	    };
-	    themeFile = "Catppuccin-Mocha";
+  programs.fish.enable = true;
 
-	};
+  programs.zoxide = {
+    enable = true;
+    enableFishIntegration = true;
+  };
+
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
   # plain files is through 'home.file'.
   home.file = {
 
   };
 
-  home.sessionVariables = {
-    # EDITOR = "emacs";
-  };
+  home.sessionVariables = { EDITOR = "nvim"; };
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;

@@ -5,14 +5,18 @@
 { config, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-      ./cyber.nix
-    ];
+  imports = [ # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    ./cyber.nix
+  ];
 
   services.xserver.displayManager.lightdm.enable = false;
-  services.xserver.displayManager.sddm.enable = false;
+  services.displayManager.sddm.enable = false;
+
+  nix.settings = { download-buffer-size = 33554432; };
+
+  # Power profiles
+  services.power-profiles-daemon.enable = true;
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -28,7 +32,9 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
-  
+  # Virtual
+  virtualisation.virtualbox.host.enable = true;
+
   # unfree enablr
   nixpkgs.config.allowUnfree = true;
 
@@ -49,15 +55,10 @@
     LC_TELEPHONE = "da_DK.UTF-8";
     LC_TIME = "da_DK.UTF-8";
   };
-	programs.bash = {
-	  interactiveShellInit = ''
-	    if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != "fish" && -z ''${BASH_EXECUTION_STRING} ]]
-	    then
-	      shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=""
-	      exec ${pkgs.fish}/bin/fish $LOGIN_OPTION
-	    fi
-	  '';
-	};
+  programs.bash = {
+    interactiveShellInit =
+      "  if [[ $(${pkgs.procps}/bin/ps --no-header --pid=$PPID --format=comm) != \"fish\" && -z \${BASH_EXECUTION_STRING} ]]\n  then\n    shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=\"\"\n    exec ${pkgs.fish}/bin/fish $LOGIN_OPTION\n  fi\n";
+  };
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
@@ -66,9 +67,6 @@
     layout = "us";
     variant = "";
   };
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
 
   # Enable sound with pipewire.
   hardware.pulseaudio.enable = false;
@@ -94,13 +92,17 @@
     isNormalUser = true;
     description = "mifd";
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-    #  thunderbird
-    ];
+    packages = with pkgs;
+      [
+        #  thunderbird
+      ];
   };
+  services.xserver = { videoDrivers = [ "intel" ]; };
 
   # Install firefox.
   programs.firefox.enable = true;
+
+  security.pam.services.swaylock = { };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -108,24 +110,38 @@
     neovim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     git
     swww
-	  kitty
-	  python3
-	  gcc
-	  tldr
-	  cargo
-	  rustc
-	  fish
-	  wofi
-	  wl-clipboard
-	  ranger
-	  wget
-	  gnumake
+    kitty
+    python3
+    gcc
+    tldr
+    cargo
+    rustc
+    fish
+    wofi
+    wl-clipboard
+    ranger
+    wget
+    gnumake
+    moonlight-qt
+    libva
+    libva-utils
+    libva-vdpau-driver
+    libvdpau
+    mesa
+    bat
+    btop
   ];
 
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [ intel-media-driver intel-vaapi-driver ];
+  };
+
   environment.variables = {
-      # This tells Java to use Wayland (prevents issues with Java windowing)
-      _JAVA_AWT_WM_NONREPARENTING = "1";
-    };
+    # This tells Java to use Wayland (prevents issues with Java windowing)
+    _JAVA_AWT_WM_NONREPARENTING = "1";
+    LIBVA_DRIVER_NAME = "iHD";
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
