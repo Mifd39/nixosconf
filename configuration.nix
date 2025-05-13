@@ -5,17 +5,19 @@
 { config, pkgs, ... }:
 
 {
-  imports = [ # Include the results of the hardware scan.
+  imports = [
     ./hardware-configuration.nix
     ./cyber.nix
+    ./gaming.nix
+    ./amd.nix
   ];
 
   services.xserver.displayManager.lightdm.enable = false;
   services.displayManager.sddm.enable = false;
 
+  fonts.packages = with pkgs; [ nerdfonts ];
   nix.settings = { download-buffer-size = 33554432; };
 
-  # Power profiles
   services.power-profiles-daemon.enable = true;
 
   # Bootloader.
@@ -66,6 +68,7 @@
   services.xserver.xkb = {
     layout = "us";
     variant = "";
+
   };
 
   # Enable sound with pipewire.
@@ -97,7 +100,6 @@
         #  thunderbird
       ];
   };
-  services.xserver = { videoDrivers = [ "intel" ]; };
 
   # Install firefox.
   programs.firefox.enable = true;
@@ -107,6 +109,7 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    vim
     neovim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     git
     swww
@@ -117,8 +120,11 @@
     cargo
     rustc
     fish
+    unzip
     wofi
+    ripgrep
     wl-clipboard
+    libsForQt5.dolphin
     ranger
     wget
     gnumake
@@ -127,20 +133,13 @@
     libva-utils
     libva-vdpau-driver
     libvdpau
-    mesa
     bat
     btop
   ];
 
-  hardware.graphics = {
-    enable = true;
-    extraPackages = with pkgs; [ intel-media-driver intel-vaapi-driver ];
-  };
-
   environment.variables = {
     # This tells Java to use Wayland (prevents issues with Java windowing)
     _JAVA_AWT_WM_NONREPARENTING = "1";
-    LIBVA_DRIVER_NAME = "iHD";
   };
 
   # Some programs need SUID wrappers, can be configured further or are
