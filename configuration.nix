@@ -138,11 +138,13 @@
     unzip
     wofi
     ripgrep
+    eza
     wl-clipboard
     libsForQt5.dolphin
     ranger
     wget
     gnumake
+    ffmpeg
     moonlight-qt
     libva
     libva-utils

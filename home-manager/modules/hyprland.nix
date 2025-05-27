@@ -18,6 +18,7 @@
 
       monitor = [
 
+	"HDMI-A-1, preferred, auto, 1, bitdepth, 10, cm, hdr"
       ];
 
       # Gaps (inner and outer)
@@ -183,21 +184,20 @@
       # Animations
       animations = {
         enabled = true;
+	bezier = [
+          "slowStartEnd, 0.39, 0.575, 0.39, 0.98"
+        ];
 
-        # Animation curves (example)
-        # bezier = [
-        #   "myBezier, 0.05, 0.9, 0.1, 1.05"
-        # ];
-
-        # Animation configurations (example)
-        # animation = [
-        #   "windows, 1, 7, myBezier"
-        #   "windowsOut, 1, 7, default, popin 80%"
-        #   "border, 1, 10, default"
-        #   "borderangle, 1, 8, default"
-        #   "fade, 1, 7, default"
-        #   "workspaces, 1, 6, default"
-        # ];
+        # Animation configurations with the specified bezier curve and slide up/down
+        animation = [
+          "windows, 1, 2, slowStartEnd, slide left" # Slide up when opening
+          "windowsOut, 1, 2, slowStartEnd, slide right" # Slide down when closing
+          "workspaces, 1, 8, default"
+	  "border, 1, 5, default"
+          "borderangle, 1, 3, default"
+        ];
+				 # Define a custom bezier curve for a snappy feel
+  # Define an even smoother bezier curve
       };
 
       # Dwindle layout settings (if using dwindle layout)
@@ -225,6 +225,7 @@
     wofi # Your application launcher
     swaylock # Your screen locker
     swww # For wallpaper management
+    mpv
     waybar
     pavucontrol
     pulseaudioFull
