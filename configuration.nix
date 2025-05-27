@@ -15,7 +15,10 @@
   services.xserver.displayManager.lightdm.enable = false;
   services.displayManager.sddm.enable = false;
 
-  fonts.packages = with pkgs; [ nerdfonts ];
+  fonts.packages = [
+  	pkgs.nerd-fonts._0xproto
+        pkgs.nerd-fonts.droid-sans-mono
+  ];
   nix.settings = { download-buffer-size = 33554432; };
 
   services.power-profiles-daemon.enable = true;
@@ -34,8 +37,17 @@
   # Enable networking
   networking.networkmanager.enable = true;
 
+
   # Virtual
   virtualisation.virtualbox.host.enable = true;
+
+  #BlueTooth
+  hardware.bluetooth.enable = true;
+  hardware.bluetooth.powerOnBoot = true;
+  services.blueman.enable = true;
+
+  #services.xserver.displayManager.gdm.enable = true;
+  #services.xserver.desktopManager.gnome.enable = true;
 
   # unfree enablr
   nixpkgs.config.allowUnfree = true;
@@ -72,7 +84,7 @@
   };
 
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -100,6 +112,9 @@
         #  thunderbird
       ];
   };
+
+
+  programs.nix-ld.enable = true;
 
   # Install firefox.
   programs.firefox.enable = true;
@@ -135,11 +150,13 @@
     libvdpau
     bat
     btop
+    dotnet-sdk_9
   ];
 
   environment.variables = {
     # This tells Java to use Wayland (prevents issues with Java windowing)
     _JAVA_AWT_WM_NONREPARENTING = "1";
+    DOTNET_ROOT = "/nix/store/j7w50zcrv5rybkj23vqw062zry8gn1wx-dotnet-sdk-9.0.203/share/dotnet/";
   };
 
   # Some programs need SUID wrappers, can be configured further or are

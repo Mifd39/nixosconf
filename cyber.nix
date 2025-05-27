@@ -1,14 +1,14 @@
-{ pkgs, ... }:
+{ config,pkgs, ... }:
 
 let
   cybersecurityPackages = with pkgs; [
     nmap
     tcpdump
     rustscan
-    metasploit
     burpsuite
     feroxbuster
     ghidra
+    metasploit
     openvpn
     bettercap
     wireshark
@@ -17,4 +17,5 @@ let
     nikto
     python312Packages.impacket
   ];
-in { environment.systemPackages = cybersecurityPackages; }
+in
+{ environment.systemPackages = cybersecurityPackages; }

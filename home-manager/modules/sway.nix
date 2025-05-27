@@ -27,6 +27,7 @@
       startup = [
         { command = "swww-daemon&; disown"; }
         { command = "swww img ~/Pictures/wall1.jpg"; }
+        { command = "waybar"; }
       ];
     };
   };
