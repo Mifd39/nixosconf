@@ -1,4 +1,6 @@
 # nixosconf
 ## How to install
-- Yoink and fugure it out
+1. Yoink and fugure it out
+## Pic
+---
 ![Pic](https://i.ibb.co/5hHgwr0G/look.png)
